@@ -1,5 +1,6 @@
 import 'package:blabla/model/ride_pref/ride_pref.dart';
 import 'package:blabla/services/ride_prefs_service.dart';
+import 'package:blabla/ui/screens/rides/rides_screen.dart';
 import 'package:flutter/material.dart';
 import '../../theme/theme.dart';
 import 'widgets/ride_prefs_form.dart';
@@ -12,12 +13,36 @@ const String blablaHomeImagePath = 'assets/images/blabla_home.png';
 /// - Enter his/her ride preference and launch a search on it
 /// - Or select a last entered ride preferences and launch a search on it
 ///
-class RidePrefsScreen extends StatelessWidget {
+class RidePrefsScreen extends StatefulWidget {
   const RidePrefsScreen({super.key});
 
-  void onRidePrefSelected(RidePref ridePref) {
+  @override
+  State<RidePrefsScreen> createState() => _RidePrefsScreenState();
+}
+
+class _RidePrefsScreenState extends State<RidePrefsScreen> {
+  // store the history
+  // what the history is just a place to store all the searched ridepref after the current search will insert to the top
+  // but we use the searched ride pref to navigate to the rides screen (in there theres a todo service for searching for rides givent the search pref)
+
+
+  void onRidePrefHistorySelected(RidePref ridePref) {
+
     RidePrefsService.selectedRidePref = ridePref;
-    // Navigator.push(context, MaterialPageRoute(builder: (context) => const RidesScreen()));
+    // idk just set it to the service but the stuff is handled by state
+    // but we need to also navigate to the ridesscreen
+    MaterialPageRoute(
+      builder: (ctx) => RidesScreen(ridePref: ridePref),
+      // or can also use the service.selectedRidePref (its a more global state)
+    );
+    setState(() {});
+  }
+
+  void onSearch(RidePref ridePref) {
+    MaterialPageRoute(
+      builder: (ctx) => RidesScreen(ridePref: ridePref),
+      // or can also use the service.selectedRidePref (its a more global state)
+    );
   }
 
   @override
@@ -29,7 +54,7 @@ class RidePrefsScreen extends StatelessWidget {
     return Column(
       children: [
         // 1 - THE HEADER
-        SizedBox(height: 16),
+        SizedBox(height: 56),
         Align(
           alignment: AlignmentGeometry.center,
           child: Text(
@@ -49,12 +74,14 @@ class RidePrefsScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-
               // 2 - THE FORM
-              RidePrefForm(initRidePref: RidePrefsService.selectedRidePref),
-              SizedBox(height: BlaSpacings.m),
+              RidePrefForm(
+                initRidePref: RidePrefsService.selectedRidePref,
+                onSearch: onSearch,
+              ),
+              // SizedBox(height: BlaSpacings.m),
 
-              // 3 - THE HISTORY 
+              // 3 - THE HISTORY
               SizedBox(
                 height: 200, // Set a fixed height
                 child: ListView.builder(
@@ -63,9 +90,7 @@ class RidePrefsScreen extends StatelessWidget {
                   itemCount: RidePrefsService.ridePrefsHistory.length,
                   itemBuilder: (ctx, index) => RidePrefsTile(
                     ridePref: RidePrefsService.ridePrefsHistory[index],
-                    onPressed: () => onRidePrefSelected(
-                      RidePrefsService.ridePrefsHistory[index],
-                    ),
+                    onPressed: () => onRidePrefHistorySelected,
                   ),
                 ),
               ),

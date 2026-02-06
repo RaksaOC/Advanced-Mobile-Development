@@ -9,8 +9,9 @@ import '../../../../utils/date_time_utils.dart';
 
 class RidePrefForm extends StatefulWidget {
   final RidePref? initRidePref;
+  final void Function(RidePref) onSearch;
 
-  const RidePrefForm({super.key, this.initRidePref});
+  const RidePrefForm({super.key, this.initRidePref, required this.onSearch});
 
   @override
   State<RidePrefForm> createState() => _RidePrefFormState();
@@ -67,8 +68,7 @@ class _RidePrefFormState extends State<RidePrefForm> {
       arrival: arrival!,
       requestedSeats: requestedSeats,
     );
-    RidePrefsService.selectedRidePref = pref; // set the selected ride pref to the new one so upon app restart it will always go to the top to set the fake init data
-    RidePrefsService.ridePrefsHistory.insert(0, pref); // add new "history" more like just another pref
+    widget.onSearch(pref);
     setState(() {}); // refresh the screen to show the new data
   }
 
@@ -87,10 +87,7 @@ class _RidePrefFormState extends State<RidePrefForm> {
           .map(
             (l) => DropdownMenuItem<Location>(
               value: l,
-              child: Text(
-                l.name,
-                style: BlaTextStyles.body,
-              ),
+              child: Text(l.name, style: BlaTextStyles.body),
             ),
           )
           .toList(),
@@ -135,10 +132,7 @@ class _RidePrefFormState extends State<RidePrefForm> {
                 children: [
                   const Icon(Icons.person, size: 18),
                   const SizedBox(width: 8),
-                  Text(
-                    v.toString(),
-                    style: BlaTextStyles.body,
-                  ),
+                  Text(v.toString(), style: BlaTextStyles.body),
                 ],
               ),
             ),
