@@ -1,36 +1,48 @@
-import 'package:blabla/model/ride/locations.dart';
-import 'package:blabla/model/ride_pref/ride_pref.dart';
-
 import '../data/dummy_data.dart';
 import '../model/ride/ride.dart';
+import '../model/ride/locations.dart';
 
 ////
 ///   This service handles:
 ///   - The list of available rides
 ///
-///
 class RidesService {
-  static List<Ride> allRides = fakeRides;
+  static List<Ride> availableRides = fakeRides; // TODO for now fake data
 
-  List<Ride> filterByDeparture(Location departure) {
-    return allRides
+  //
+  //  filter the rides starting from given departure location
+  //
+  static List<Ride> _filterByDeparture(Location departure) {
+    return availableRides
         .where((ride) => ride.departureLocation == departure)
         .toList();
   }
 
-  List<Ride> filterBySeatRequest(int seatRequested) {
-    return allRides
-        .where((ride) => ride.remainingSeats >= seatRequested)
+  //
+  //  filter the rides starting for the given requested seat number
+  //
+  static List<Ride> _filterBySeatRequested(int requestedSeat) {
+    return availableRides
+        .where((ride) => ride.availableSeats >= requestedSeat)
         .toList();
   }
 
-  List<Ride> filterBy({Location? departure, int? seatRequested}) {
-    return allRides.where((ride) {
-      final matchesDeparture =
-          departure == null || ride.departureLocation == departure;
-      final matchesSeats =
-          seatRequested == null || ride.remainingSeats >= seatRequested;
-      return matchesDeparture && matchesSeats;
-    }).toList();
+  //
+  //  filter the rides   with several optional criteria (flexible filter options)
+  //
+  static List<Ride> filterBy({Location? departure, int? seatRequested}) {
+    if (departure != null) {
+      availableRides = availableRides
+          .where((ride) => ride.departureLocation == departure)
+          .toList();
+    }
+
+    if (seatRequested != null) {
+      availableRides = availableRides
+          .where((ride) => ride.remainingSeats >= seatRequested)
+          .toList();
+    }
+
+    return availableRides;
   }
 }

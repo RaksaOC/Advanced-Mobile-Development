@@ -1,5 +1,5 @@
-import 'package:blabla/data/dummy_data.dart';
-
+// import '../dummy_data/dummy_data.dart';
+import '../data/dummy_data.dart';
 import '../model/ride/locations.dart';
 
 ////
@@ -7,6 +7,5 @@ import '../model/ride/locations.dart';
 ///   - The list of available rides
 ///
 class LocationsService {
-  static const List<Location> availableLocations =
-      fakeLocations; // TODO for now fake data
+  static const List<Location> availableLocations = fakeLocations;
 }
