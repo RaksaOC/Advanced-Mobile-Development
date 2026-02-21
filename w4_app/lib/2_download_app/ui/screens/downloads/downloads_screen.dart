@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:w4_app/2_download_app/ui/screens/downloads/widgets/download_tile.dart';
 import '../../providers/theme_color_provider.dart';
 import '../../theme/theme.dart';
 import 'widgets/download_controler.dart';
-
 
 class DownloadsScreen extends StatelessWidget {
   // Create the list of fake ressources
@@ -28,18 +28,18 @@ class DownloadsScreen extends StatelessWidget {
       color: themeColor.backgroundColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
+        spacing: 10,
         children: [
           SizedBox(height: 16),
           Text(
             "Downloads",
-            style: AppTextStyles.heading.copyWith(
-              color: themeColor.color,
-            ),
+            style: AppTextStyles.heading.copyWith(color: themeColor.color),
           ),
 
           SizedBox(height: 50),
 
-          // TODO - Add the Download tiles
+          for (DownloadController controller in controllers)
+            DownloadTile(controller: controller),
         ],
       ),
     );
