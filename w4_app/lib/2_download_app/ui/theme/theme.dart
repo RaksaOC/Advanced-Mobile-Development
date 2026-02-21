@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
- 
+
+import '../providers/theme_color_provider.dart';
+
 ///
 /// Definition of App colors.
 ///
 class AppColors {
-
   // Bellow colors never changes with theme :
   static Color neutralDark = const Color(0xFF054752);
   static Color neutralLight = const Color(0xFF708c91);
@@ -13,7 +14,6 @@ class AppColors {
   static Color neutralLighter = const Color(0xFF92A7AB);
 
   static Color greyLight = const Color(0xFFE2E2E2);
- 
 
   static Color get text {
     return AppColors.neutralDark;
@@ -57,3 +57,16 @@ ThemeData appTheme = ThemeData(
   fontFamily: 'Eesti',
   scaffoldBackgroundColor: Colors.white,
 );
+
+/// Builds theme data from the current theme color (main + derived background).
+ThemeData buildAppTheme(ThemeColor themeColor) {
+  return ThemeData(
+    fontFamily: 'Eesti',
+    primaryColor: themeColor.color,
+    scaffoldBackgroundColor: themeColor.backgroundColor,
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: themeColor.color,
+      brightness: Brightness.light,
+    ),
+  );
+}

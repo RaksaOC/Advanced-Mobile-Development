@@ -23,8 +23,9 @@ class DownloadsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeColor = themeColorProvider.currentThemeColor;
     return Container(
-      color: currentThemeColor.backgroundColor,
+      color: themeColor.backgroundColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -32,7 +33,7 @@ class DownloadsScreen extends StatelessWidget {
           Text(
             "Downloads",
             style: AppTextStyles.heading.copyWith(
-              color: currentThemeColor.color,
+              color: themeColor.color,
             ),
           ),
 
