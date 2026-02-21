@@ -23,7 +23,9 @@ class DownloadController extends ChangeNotifier {
 
   // ACTIONS
   void startDownload() async {
-    if (_status == DownloadStatus.downloading) return;
+    if (_status == DownloadStatus.downloading ||
+        _status == DownloadStatus.downloaded)
+      return;
 
     _status = DownloadStatus.downloading;
     notifyListeners();
