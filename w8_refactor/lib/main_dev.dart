@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'main_common.dart';
 
 List<InheritedProvider> get devProviders {
+  // mock deps for dev
   final locationRepository = LocationRepositoryMock();
   final ridePrefRepository = RidePreferenceRepositoryMock();
   final rideRepository = RideRepositoryMock();

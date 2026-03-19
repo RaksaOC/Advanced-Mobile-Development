@@ -20,39 +20,33 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  HomeVM? _viewModel;
+  late final HomeVM vm;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _viewModel?.dispose();
-    _viewModel = HomeVM(
-      ridePreferenceState: context.read<RidePreferenceState>(),
-    );
+  void initState() {
+    super.initState();
+    vm = HomeVM(ridePreferenceState: context.read<RidePreferenceState>());
   }
 
   @override
   void dispose() {
-    _viewModel?.dispose();
+    vm.dispose();
     super.dispose();
   }
 
-  void onRidePrefSelected(RidePreference selectedPreference) async {
-    _viewModel!.selectPreference(selectedPreference);
+  // -------
 
-    // 2 - Navigate to the rides screen
+  void onRidePrefSelected(RidePreference pref) async {
+    vm.selectPreference(pref);
     await Navigator.of(
       context,
     ).push(AnimationUtils.createBottomToTopRoute(RidesSelectionScreen()));
   }
 
   @override
-  Widget build(context) {
-    final vm = _viewModel;
-    if (vm == null) return const SizedBox.shrink();
-
-    return AnimatedBuilder(
-      animation: vm,
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: vm,
       builder: (context, _) =>
           HomeContent(viewModel: vm, onRidePrefSelected: onRidePrefSelected),
     );

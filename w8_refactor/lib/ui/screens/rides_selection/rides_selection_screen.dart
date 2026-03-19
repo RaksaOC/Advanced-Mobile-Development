@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../model/ride/ride.dart';
 import '../../../model/ride_pref/ride_pref.dart';
-import '../../../data/repositories/ride/ride_repository.dart';
 import '../../../utils/animations_util.dart' show AnimationUtils;
 import '../../states/ride_preference_state.dart';
-import '../../theme/theme.dart';
 import 'widgets/ride_preference_modal.dart';
-import 'widgets/rides_selection_header.dart';
-import 'widgets/rides_selection_tile.dart';
+import '../../../data/repositories/ride/ride_repository.dart';
+import 'view_model/rides_selection_vm.dart';
+import 'widgets/rides_selection_content.dart';
 
 ///
 ///  The Ride Selection screen allows user to select a ride, once ride preferences have been defined.
@@ -24,6 +23,23 @@ class RidesSelectionScreen extends StatefulWidget {
 }
 
 class _RidesSelectionScreenState extends State<RidesSelectionScreen> {
+  late final RidesSelectionVM vm;
+
+  @override
+  void initState() {
+    super.initState();
+    vm = RidesSelectionVM(
+      ridePreferenceState: context.read<RidePreferenceState>(),
+      rideRepository: context.read<RideRepository>(),
+    );
+  }
+
+  @override
+  void dispose() {
+    vm.dispose();
+    super.dispose();
+  }
+
   void onBackTap() {
     Navigator.pop(context);
   }
@@ -37,7 +53,6 @@ class _RidesSelectionScreenState extends State<RidesSelectionScreen> {
   }
 
   void onPreferencePressed() async {
-    final vm = context.read<RidePreferenceState>();
     // 1 - Navigate to the rides preference picker
     RidePreference? newPreference = await Navigator.of(context)
         .push<RidePreference>(
@@ -47,48 +62,21 @@ class _RidesSelectionScreenState extends State<RidesSelectionScreen> {
         );
 
     if (newPreference != null) {
-      // 2 - Ask the service to update the current preference
       vm.selectPreference(newPreference);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<RidePreferenceState>();
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.only(
-          left: BlaSpacings.m, right: BlaSpacings.m, top: BlaSpacings.s),
-        child: Builder(
-          builder: (context) {
-            final selectedRidePreference = vm.selectedPreference!;
-            final matchingRides = context
-                .read<RideRepository>()
-                .getRidesFor(selectedRidePreference);
-
-            return Column(
-              children: [
-                RideSelectionHeader(
-                  ridePreference: selectedRidePreference,
-                  onBackPressed: onBackTap,
-                  onFilterPressed: onFilterPressed,
-                  onPreferencePressed: onPreferencePressed,
-                ),
-
-                SizedBox(height: 100),
-
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: matchingRides.length,
-                    itemBuilder: (ctx, index) => RideSelectionTile(
-                      ride: matchingRides[index],
-                      onPressed: () => onRideSelected(matchingRides[index]),
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
+      body: ListenableBuilder(
+        listenable: vm,
+        builder: (context, _) => RidesSelectionContent(
+          viewModel: vm,
+          onBackTap: onBackTap,
+          onFilterPressed: onFilterPressed,
+          onPreferencePressed: onPreferencePressed,
+          onRidePressed: (index) => onRideSelected(vm.matchingRides[index]),
         ),
       ),
     );
