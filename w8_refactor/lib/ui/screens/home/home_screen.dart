@@ -3,12 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../utils/animations_util.dart';
 import '../../states/ride_preference_state.dart';
-import '../../theme/theme.dart';
-import '../../widgets/pickers/bla_ride_preference_picker.dart';
 import '../rides_selection/rides_selection_screen.dart';
-import 'widgets/home_history_tile.dart';
-
-const String blablaHomeImagePath = 'assets/images/blabla_home.png';
+import 'view_model/home_vm.dart';
+import 'widgets/home_content.dart';
 
 ///
 /// This screen allows user to:
@@ -23,8 +20,25 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  HomeVM? _viewModel;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _viewModel?.dispose();
+    _viewModel = HomeVM(
+      ridePreferenceState: context.read<RidePreferenceState>(),
+    );
+  }
+
+  @override
+  void dispose() {
+    _viewModel?.dispose();
+    super.dispose();
+  }
+
   void onRidePrefSelected(RidePreference selectedPreference) async {
-    context.read<RidePreferenceState>().selectPreference(selectedPreference);
+    _viewModel!.selectPreference(selectedPreference);
 
     // 2 - Navigate to the rides screen
     await Navigator.of(
@@ -34,75 +48,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(context) {
-    final vm = context.watch<RidePreferenceState>();
-    return Stack(children: [_buildBackground(), _buildForeground(vm)]);
-  }
+    final vm = _viewModel;
+    if (vm == null) return const SizedBox.shrink();
 
-  Widget _buildForeground(RidePreferenceState vm) {
-    return Column(
-      children: [
-        // 1 - THE HEADER
-        SizedBox(height: 16),
-        Align(
-          alignment: AlignmentGeometry.center,
-          child: Text(
-            "Your pick of rides at low price",
-            style: BlaTextStyles.heading.copyWith(color: Colors.white),
-          ),
-        ),
-        SizedBox(height: 100),
-
-        Container(
-          margin: EdgeInsets.symmetric(horizontal: BlaSpacings.xxl),
-          decoration: BoxDecoration(
-            color: Colors.white, // White background
-            borderRadius: BorderRadius.circular(16), // Rounded corners
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // 2 - THE FORM
-              BlaRidePreferencePicker(
-                initRidePreference: vm.selectedPreference,
-                onRidePreferenceSelected: onRidePrefSelected,
-              ),
-              SizedBox(height: BlaSpacings.m),
-
-              // 3 - THE HISTORY
-              _buildHistory(vm),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildHistory(RidePreferenceState vm) {
-    // Reverse the history of preferences
-    List<RidePreference> history = vm.preferenceHistory.reversed.toList();
-    return SizedBox(
-      height: 200, // Set a fixed height
-      child: ListView.builder(
-        shrinkWrap: true, // Fix ListView height issue
-        physics: AlwaysScrollableScrollPhysics(),
-        itemCount: history.length,
-        itemBuilder: (ctx, index) => HomeHistoryTile(
-          ridePref: history[index],
-          onPressed: () => onRidePrefSelected(history[index]),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBackground() {
-    return SizedBox(
-      width: double.infinity,
-      height: 340,
-      child: Image.asset(
-        blablaHomeImagePath,
-        fit: BoxFit.cover, // Adjust image fit to cover the container
-      ),
+    return AnimatedBuilder(
+      animation: vm,
+      builder: (context, _) =>
+          HomeContent(viewModel: vm, onRidePrefSelected: onRidePrefSelected),
     );
   }
 }
