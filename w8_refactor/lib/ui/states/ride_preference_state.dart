@@ -1,13 +1,12 @@
 import 'package:flutter/foundation.dart';
 
-import '../data/repositories/ride_preference/ride_preference_repository.dart';
-import '../model/ride_pref/ride_pref.dart';
+import '../../data/repositories/ride_preference/ride_preference_repository.dart';
+import '../../model/ride_pref/ride_pref.dart';
 
-class RidePreferencesViewModel extends ChangeNotifier {
+class RidePreferenceState extends ChangeNotifier {
   final RidePreferenceRepository _repo;
 
-  RidePreferencesViewModel({required RidePreferenceRepository repo})
-    : _repo = repo;
+  RidePreferenceState({required RidePreferenceRepository repo}) : _repo = repo;
 
   RidePreference? _selectedPreference;
 
@@ -22,3 +21,4 @@ class RidePreferencesViewModel extends ChangeNotifier {
     notifyListeners();
   }
 }
+

@@ -7,7 +7,7 @@ import '../../../model/ride/locations.dart';
 import '../../../model/ride_pref/ride_pref.dart';
 import '../../../utils/animations_util.dart';
 import '../../../utils/date_time_utils.dart';
-import '../../../view_models/ride_preferences_view_model.dart';
+import '../../states/ride_preference_state.dart';
 import '../../theme/theme.dart';
 import '../buttons/bla_icon_button.dart';
 import 'bla_location_picker.dart';
@@ -112,7 +112,7 @@ class _BlaRidePreferencePickerState extends State<BlaRidePreferencePicker> {
   void onSeatNumberPressed() async {
     // 1- Select a arrival
     final maxSeat =
-        context.read<RidePreferencesViewModel>().maxAllowedSeats;
+        context.read<RidePreferenceState>().maxAllowedSeats;
     int? selectedSeatNumber = await Navigator.of(context).push<int>(
       AnimationUtils.createRightToLeftRoute(
         BlaSeatPicker(

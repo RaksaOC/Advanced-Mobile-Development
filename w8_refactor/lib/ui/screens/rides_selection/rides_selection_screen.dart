@@ -4,7 +4,7 @@ import '../../../model/ride/ride.dart';
 import '../../../model/ride_pref/ride_pref.dart';
 import '../../../data/repositories/ride/ride_repository.dart';
 import '../../../utils/animations_util.dart' show AnimationUtils;
-import '../../../view_models/ride_preferences_view_model.dart';
+import '../../states/ride_preference_state.dart';
 import '../../theme/theme.dart';
 import 'widgets/ride_preference_modal.dart';
 import 'widgets/rides_selection_header.dart';
@@ -37,7 +37,7 @@ class _RidesSelectionScreenState extends State<RidesSelectionScreen> {
   }
 
   void onPreferencePressed() async {
-    final vm = context.read<RidePreferencesViewModel>();
+    final vm = context.read<RidePreferenceState>();
     // 1 - Navigate to the rides preference picker
     RidePreference? newPreference = await Navigator.of(context)
         .push<RidePreference>(
@@ -54,7 +54,7 @@ class _RidesSelectionScreenState extends State<RidesSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<RidePreferencesViewModel>();
+    final vm = context.watch<RidePreferenceState>();
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.only(

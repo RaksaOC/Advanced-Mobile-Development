@@ -4,7 +4,7 @@ import 'package:blabla/data/repositories/ride_preference/ride_preference_reposit
 import 'package:blabla/data/repositories/ride_preference/ride_preference_repository_mock.dart';
 import 'package:blabla/data/repositories/ride/ride_repository.dart';
 import 'package:blabla/data/repositories/ride/ride_repository_mock.dart';
-import 'package:blabla/view_models/ride_preferences_view_model.dart';
+import 'package:blabla/ui/states/ride_preference_state.dart';
 import 'package:provider/provider.dart';
 
 import 'main_common.dart';
@@ -18,6 +18,9 @@ List<InheritedProvider> get devProviders {
     Provider<LocationRepository>(create: (context) => locationRepository),
     Provider<RidePreferenceRepository>(create: (context) => ridePrefRepository),
     Provider<RideRepository>(create: (context) => rideRepository),
+    ChangeNotifierProvider<RidePreferenceState>(
+      create: (context) => RidePreferenceState(repo: ridePrefRepository),
+    ),
   ];
 }
 

@@ -2,7 +2,7 @@ import 'package:blabla/model/ride_pref/ride_pref.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../utils/animations_util.dart';
-import '../../../view_models/ride_preferences_view_model.dart';
+import '../../states/ride_preference_state.dart';
 import '../../theme/theme.dart';
 import '../../widgets/pickers/bla_ride_preference_picker.dart';
 import '../rides_selection/rides_selection_screen.dart';
@@ -24,7 +24,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   void onRidePrefSelected(RidePreference selectedPreference) async {
-    context.read<RidePreferencesViewModel>().selectPreference(selectedPreference);
+    context.read<RidePreferenceState>().selectPreference(selectedPreference);
 
     // 2 - Navigate to the rides screen
     await Navigator.of(
@@ -34,11 +34,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(context) {
-    final vm = context.watch<RidePreferencesViewModel>();
+    final vm = context.watch<RidePreferenceState>();
     return Stack(children: [_buildBackground(), _buildForeground(vm)]);
   }
 
-  Widget _buildForeground(RidePreferencesViewModel vm) {
+  Widget _buildForeground(RidePreferenceState vm) {
     return Column(
       children: [
         // 1 - THE HEADER
@@ -78,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildHistory(RidePreferencesViewModel vm) {
+  Widget _buildHistory(RidePreferenceState vm) {
     // Reverse the history of preferences
     List<RidePreference> history = vm.preferenceHistory.reversed.toList();
     return SizedBox(
