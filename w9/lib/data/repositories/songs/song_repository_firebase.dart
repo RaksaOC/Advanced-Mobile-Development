@@ -8,7 +8,7 @@ import 'song_repository.dart';
 
 class SongRepositoryFirebase extends SongRepository {
   final Uri songsUri = Uri.https(
-    'fir-test-37360.firebaseio.com',
+    'https://console.firebase.google.com/u/0/project/fir-test-ef8b3/database/fir-test-ef8b3-default-rtdb/data/~2F',
     '/songs.json',
   );
 
