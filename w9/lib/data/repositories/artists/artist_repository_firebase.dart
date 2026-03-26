@@ -7,56 +7,30 @@ import '../../../model/artists/artist.dart';
 import 'artist_repository.dart';
 
 class ArtistRepositoryFirebase extends ArtistRepository {
-  final Uri artistsUri =
-      Uri.https('fir-test-37360.firebaseio.com', '/artists.json');
+  final Uri artistsUri = Uri.https(
+    'fir-test-ef8b3-default-rtdb.asia-southeast1.firebasedatabase.app',
+    '/artists.json',
+  );
 
   @override
   Future<List<Artist>> fetchArtists() async {
-    final http.Response response = await http.get(artistsUri);
+    try {
+      final http.Response response = await http.get(artistsUri);
 
-    if (response.statusCode != 200) {
-      throw Exception('Failed to load artists');
-    }
+      if (response.statusCode == 200) {
+        Map<String, dynamic> artistJson = json.decode(response.body);
+        List<Artist> artists = [];
 
-    final decoded = json.decode(response.body);
-
-    if (decoded is! Map<String, dynamic>) {
-      throw Exception('Failed to parse artists response');
-    }
-
-    final artistsAny = decoded['artists'];
-    final Map<dynamic, dynamic> artistsMap;
-
-    if (artistsAny is Map) {
-      artistsMap = artistsAny;
-    } else {
-      artistsMap = decoded;
-    }
-
-    final List<Artist> artistList = [];
-
-    for (final entry in artistsMap.entries) {
-      final artistId = entry.key.toString();
-      final rawAny = entry.value;
-
-      if (rawAny is Map<String, dynamic>) {
-        artistList.add(ArtistDto.fromJson(rawAny, artistId));
-        continue;
-      }
-
-      if (rawAny is Map) {
-        final Map<String, dynamic> raw = {};
-        for (final rawEntry in rawAny.entries) {
-          raw[rawEntry.key.toString()] = rawEntry.value;
+        for (var key in artistJson.keys) {
+          var data = artistJson[key];
+          artists.add(ArtistDto.fromJson(data, key));
         }
-        artistList.add(ArtistDto.fromJson(raw, artistId));
-        continue;
+        return artists;
+      } else {
+        throw Exception("Falied to load artists");
       }
-
-      throw Exception('Invalid artist payload for id $artistId');
+    } catch (e) {
+      throw Exception("Failed to load artists");
     }
-
-    return artistList;
   }
 }
-

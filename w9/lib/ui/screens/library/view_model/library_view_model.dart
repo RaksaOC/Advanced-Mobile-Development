@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
 import '../../../../data/repositories/songs/song_repository.dart';
+import '../../../../data/repositories/artists/artist_repository.dart';
 import '../../../states/player_state.dart';
 import '../../../../model/songs/song.dart';
+import '../../../../model/songs/song_artist.dart';
+import '../../../../model/artists/artist.dart';
 import '../../../utils/async_value.dart';
 
 class LibraryViewModel extends ChangeNotifier {
   final SongRepository songRepository;
+  final ArtistRepository artistRepository;
   final PlayerState playerState;
 
-  AsyncValue<List<Song>> songsValue = AsyncValue.loading();
+  AsyncValue<List<SongArtist>> songsValue = AsyncValue.loading();
 
-  LibraryViewModel({required this.songRepository, required this.playerState}) {
+  LibraryViewModel({
+    required this.songRepository,
+    required this.artistRepository,
+    required this.playerState,
+  }) {
     playerState.addListener(notifyListeners);
 
     // init
@@ -34,14 +42,29 @@ class LibraryViewModel extends ChangeNotifier {
 
     try {
       // 2- Fetch is successfull
-      List<Song> songs = await songRepository.fetchSongs();
-      songsValue = AsyncValue.success(songs);
+      final songs = await songRepository.fetchSongs();
+      final artists = await artistRepository.fetchArtists();
+
+      final Map<String, Artist> artistById = {};
+      for (final artist in artists) {
+        artistById[artist.id] = artist;
+      }
+
+      final List<SongArtist> joined = [];
+      for (final song in songs) {
+        final artist =
+            artistById[song.artistId] ??
+            Artist(id: song.artistId, name: 'Unknown', genre: '', imageUrl: '');
+
+        joined.add(SongArtist(song: song, artist: artist));
+      }
+
+      songsValue = AsyncValue.success(joined);
     } catch (e) {
       // 3- Fetch is unsucessfull
       songsValue = AsyncValue.error(e);
     }
-     notifyListeners();
-
+    notifyListeners();
   }
 
   bool isSongPlaying(Song song) => playerState.currentSong == song;

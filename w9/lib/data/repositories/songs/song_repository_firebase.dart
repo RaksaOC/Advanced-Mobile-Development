@@ -8,7 +8,7 @@ import 'song_repository.dart';
 
 class SongRepositoryFirebase extends SongRepository {
   final Uri songsUri = Uri.https(
-    'https://console.firebase.google.com/u/0/project/fir-test-ef8b3/database/fir-test-ef8b3-default-rtdb/data/~2F',
+    'fir-test-ef8b3-default-rtdb.asia-southeast1.firebasedatabase.app',
     '/songs.json',
   );
 
@@ -18,29 +18,16 @@ class SongRepositoryFirebase extends SongRepository {
 
     if (response.statusCode == 200) {
       // 1 - Send the retrieved list of songs
-      final decoded = json.decode(response.body);
+      Map<String, dynamic> songJson = json.decode(response.body);
+      List<Song> songs = [];
 
-      if (decoded is Map<String, dynamic>) {
-        final songs = decoded['songs'];
-        if (songs is Map<String, dynamic>) {
-          return songs.entries.map((entry) {
-            final songId = entry.key;
-            final raw = entry.value;
-            if (raw is Map<String, dynamic>) {
-              return SongDto.fromJson(raw, songId);
-            }
-            if (raw is Map) {
-              return SongDto.fromJson(
-                raw.map((k, v) => MapEntry(k.toString(), v)),
-                songId,
-              );
-            }
-            throw Exception('Invalid song payload for id $songId');
-          }).toList();
-        }
+      // ;oop all keys
+      for (var key in songJson.keys) {
+        // Get value
+        var data = songJson[key];
+        songs.add(SongDto.fromJson(data, key));
       }
-
-      throw Exception('Failed to parse songs response');
+      return songs;
     } else {
       // 2- Throw expcetion if any issue
       throw Exception('Failed to load posts');
