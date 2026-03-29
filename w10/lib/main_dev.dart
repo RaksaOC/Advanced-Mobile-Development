@@ -1,6 +1,6 @@
 import 'package:provider/provider.dart';
-import 'package:week_9/ui/screens/artists/view_model/artists_view_model.dart';
-import 'package:week_9/ui/screens/library/view_model/library_view_model.dart';
+import 'package:w10/ui/screens/artists/view_model/artists_view_model.dart';
+import 'package:w10/ui/screens/library/view_model/library_view_model.dart';
 
 import 'data/repositories/artist/artist_repository.dart';
 import 'data/repositories/artist/artist_repository_firebase.dart';
@@ -36,9 +36,8 @@ List<InheritedProvider> get devProviders {
     ),
 
     ChangeNotifierProvider<ArtistsViewModel>(
-      create: (context) => ArtistsViewModel(
-        artistRepository: context.read<ArtistRepository>(),
-      ),
+      create: (context) =>
+          ArtistsViewModel(artistRepository: context.read<ArtistRepository>()),
     ),
   ];
 }
