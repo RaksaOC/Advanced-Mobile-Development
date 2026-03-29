@@ -8,7 +8,7 @@ import 'song_repository.dart';
 
 class SongRepositoryFirebase extends SongRepository {
   final String baseUrl =
-      'week-10-db-default-rtdb.asia-southeast1.firebasedatabase.app';
+      'fir-test-ef8b3-default-rtdb.asia-southeast1.firebasedatabase.app';
   List<Song>? _cachedSongs;
 
   @override

@@ -10,7 +10,7 @@ import 'artist_repository.dart';
 
 class ArtistRepositoryFirebase implements ArtistRepository {
   final String baseUrl =
-      'week-10-db-default-rtdb.asia-southeast1.firebasedatabase.app';
+      'fir-test-ef8b3-default-rtdb.asia-southeast1.firebasedatabase.app';
 
   List<Artist>? _cachedArtist;
 

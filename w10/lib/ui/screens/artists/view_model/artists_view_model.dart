@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import '../../../../data/repositories/artist/artist_repository.dart';
+import '../../../../services/artists/artists_service.dart';
 import '../../../../model/artist/artist.dart';
 import '../../../utils/async_value.dart';
 
 class ArtistsViewModel extends ChangeNotifier {
-  final ArtistRepository artistRepository;
+  final ArtistsService artistsService;
 
   AsyncValue<List<Artist>> artistsValue = AsyncValue.loading();
 
-  ArtistsViewModel({required this.artistRepository}) {
+  ArtistsViewModel({required this.artistsService}) {
     _init();
   }
 
@@ -21,7 +21,7 @@ class ArtistsViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      List<Artist> artists = await artistRepository.fetchArtists();
+      List<Artist> artists = await artistsService.fetchArtists();
       artistsValue = AsyncValue.success(artists);
     } catch (e) {
       artistsValue = AsyncValue.error(e);
@@ -30,6 +30,6 @@ class ArtistsViewModel extends ChangeNotifier {
   }
 
   Future<void> onRefresh() async {
-    await artistRepository.fetchArtists(forceFetch: true);
+    await artistsService.fetchArtists(forceFetch: true);
   }
 }

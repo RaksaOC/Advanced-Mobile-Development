@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:w10/data/repositories/artist/artist_repository.dart';
-import 'package:w10/data/repositories/songs/song_repository.dart';
 import 'package:w10/model/artist/artist.dart';
+import 'package:w10/services/artist_detail/artist_detail_service.dart';
 import 'package:w10/ui/screens/artist_detail/view_model/artist_detail_view_model.dart';
 import 'package:w10/ui/screens/artist_detail/widgets/artist_detail_content.dart';
 import 'package:w10/ui/states/settings_state.dart';
@@ -16,8 +15,7 @@ class ArtistDetailScreen extends StatelessWidget {
     final bg = context.watch<AppSettingsState>().theme.backgroundColor;
     return ChangeNotifierProvider(
       create: (context) => ArtistDetailViewModel(
-        artistRepo: context.read<ArtistRepository>(),
-        songRepo: context.read<SongRepository>(),
+        artistDetailService: context.read<ArtistDetailService>(),
         artist: artist,
       ),
       child: Scaffold(

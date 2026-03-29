@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:w10/data/repositories/artist/artist_repository.dart';
-import 'package:w10/data/repositories/songs/song_repository.dart';
 import 'package:w10/model/artist/artist.dart';
 import 'package:w10/model/comments/comment.dart';
 import 'package:w10/model/songs/song.dart';
+import 'package:w10/services/artist_detail/artist_detail_service.dart';
 import 'package:w10/ui/utils/async_value.dart';
 
 class ArtistDetailViewModel extends ChangeNotifier {
-  final ArtistRepository artistRepo;
-  final SongRepository songRepo;
+  final ArtistDetailService artistDetailService;
 
   final Artist artist;
   AsyncValue<List<Song>> songsValue = AsyncValue.loading();
   AsyncValue<List<Comment>> commentsValue = AsyncValue.loading();
 
   ArtistDetailViewModel({
-    required this.artistRepo,
-    required this.songRepo,
+    required this.artistDetailService,
     required this.artist,
   }) {
     _init();
@@ -31,9 +28,8 @@ class ArtistDetailViewModel extends ChangeNotifier {
     songsValue = AsyncValue.loading();
     notifyListeners();
     try {
-      final List<Song> allSongs = await songRepo.fetchSongs();
       songsValue = AsyncValue.success(
-        allSongs.where((song) => song.artistId == artist.id).toList(),
+        await artistDetailService.fetchSongsByArtist(artist.id),
       );
     } catch (e) {
       songsValue = AsyncValue.error(e);
@@ -45,7 +41,7 @@ class ArtistDetailViewModel extends ChangeNotifier {
     commentsValue = AsyncValue.loading();
     notifyListeners();
     try {
-      final List<Comment> comments = await artistRepo.fetchArtistComments(
+      final List<Comment> comments = await artistDetailService.fetchArtistComments(
         artist.id,
       );
       commentsValue = AsyncValue.success(comments);
@@ -57,7 +53,7 @@ class ArtistDetailViewModel extends ChangeNotifier {
 
   void likeSong(String id) async {
     try {
-      final Song updatedSong = await songRepo.likeSong(id);
+      final Song updatedSong = await artistDetailService.likeSong(id);
 
       final List<Song> currentSongs = songsValue.data!;
       final List<Song> updatedSongs = [];
@@ -79,7 +75,10 @@ class ArtistDetailViewModel extends ChangeNotifier {
 
   void addComment(String text) async {
     try {
-      final Comment newComment = await artistRepo.postComment(artist.id, text);
+      final Comment newComment = await artistDetailService.postComment(
+        artist.id,
+        text,
+      );
 
       final List<Comment> currentComments = commentsValue.data!;
       final List<Comment> updatedComments = [];
